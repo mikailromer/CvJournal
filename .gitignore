@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+/.metadata/
+
+# File containing the CVs list
+*cv_list.txt
