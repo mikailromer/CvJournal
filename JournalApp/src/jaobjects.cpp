@@ -45,8 +45,7 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
 			comp_num++;
 			Companies[comp_num].set_name(p);
 			Companies[comp_num].calculate_num_of_positions(cv_list, ftell(cv_list));
-			//Companies[comp_num].allocate_memory_for_positions();
-			//Companies[comp_num].set_positions_list(cv_list, ftell(cv_list));
+			Companies[comp_num].set_positions_list(cv_list, ftell(cv_list));
 		}			
 	}
 	fseek(cv_list, point_pos, SEEK_SET);
@@ -106,24 +105,12 @@ void Company::set_positions_list(FILE* cv_list, int point_pos)
 	fseek(cv_list, point_pos, SEEK_SET);
 }
 
-
-
 void Company::set_name(const char* name)
 {
 	strcpy(company_name, name);
 	company_name[strlen(company_name) - 1] = '\0';
 }
 
-void Company::allocate_memory_for_positions()
-{
-	Positions = (Position*) malloc(sizeof(Position) * 7);
-	if (!(Positions))
-	{
-		printf("Memory allocation has failed!!!");
-		exit(1);
-	}
-	free(Positions);
-}
 void Position::set_position_name(const char* name)
 {
 	strcpy(position_name, name);

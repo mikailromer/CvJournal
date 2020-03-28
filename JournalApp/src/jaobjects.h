@@ -25,7 +25,6 @@ public:
 	void set_name(const char *name);
 	int calculate_num_of_positions(FILE* cv_list, int point_pos);
 	void set_positions_list(FILE* cv_list, int point_pos);
-	void allocate_memory_for_positions();
 	void get_company();
 };
 
