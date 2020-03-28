@@ -34,3 +34,8 @@
 
 # File containing the CVs list
 *cv_list.txt
+
+# Directories
+
+*Debug/
+*Release/
