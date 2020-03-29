@@ -7,6 +7,10 @@
 
 void Record::clean_record_data()
 {
+	for(int i = 0; i < num_of_companies; i++)
+	{
+		free(Companies[i].Positions);
+	}
 	free(Companies);
 }
 
@@ -111,8 +115,18 @@ void Company::set_name(const char* name)
 	company_name[strlen(company_name) - 1] = '\0';
 }
 
+void Company::print_company_name(int comp_num)
+{
+	printf("\tCompany No.%i: $s\n",comp_num, company_name);
+}
+
 void Position::set_position_name(const char* name)
 {
 	strcpy(position_name, name);
 	position_name[strlen(position_name) - 1] = '\0';
+}
+
+void Position::print_position_name(int pos_num)
+{
+	printf("\t\tPosition No.%i: $s\n",pos_num, position_name);
 }
