@@ -5,6 +5,52 @@
 
 #include "jaobjects.h"
 
+void print_record_data(Record* Records, int rec_num);
+void print_all_recorded_data(Record* Records, int num_of_records);
+int parse_cv_list(const char* filename, Record *cv_records, int number_of_records);
+int num_of_records(const char* filename);
+
+
+int main()
+{
+	Record* Records;
+	const char* filename = "src/cv_list.txt";
+	uint32_t N = num_of_records(filename);
+	if (N) 
+	{ 
+		Records = (Record*) malloc(sizeof(Record) * N);
+		parse_cv_list(filename, Records, N);
+		print_all_recorded_data(Records, N);
+		for (uint32_t i = 0; i < N; i++)
+		{
+			Records[i].clean_record_data();
+		}
+
+		free(Records);
+	}
+	else 
+	{
+		return -1;
+	}
+
+	return 0;
+}
+
+void print_record_data(Record* Records, int rec_num)
+{
+	Records[rec_num].print_date(rec_num+1);
+	Records[rec_num].print_companies();
+}
+
+void print_all_recorded_data(Record* Records, int num_of_records)
+{
+	for (int i = 0; i < num_of_records; i++)
+	{
+		Records[i].print_date(i+1);
+		Records[i].print_companies();
+	}
+}
+
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records)
 {
 	FILE* cv_list =fopen(filename, "r") ;
@@ -53,15 +99,6 @@ int parse_cv_list(const char* filename, Record *cv_records, int number_of_record
 	return 0;
 }
 
-void print_recorded_data(Record* Records, int num_of_records)
-{
-	for (int i = 0; i < num_of_records; i++)
-	{
-		Records[i].print_date(i+1);
-		Records[i].print_companies();
-	}
-}
-
 int num_of_records(const char* filename)
 {
 	FILE* cv_list =fopen(filename, "r") ;
@@ -85,29 +122,4 @@ int num_of_records(const char* filename)
 	}
 	fclose(cv_list);
 	return rec_num;
-}
-int main()
-{
-	
-	Record* Records;
-	const char* filename = "src/cv_list.txt";
-	uint32_t N = num_of_records(filename);
-	if (N) 
-	{ 
-		Records = (Record*) malloc(sizeof(Record) * N);
-		parse_cv_list(filename, Records, N);
-		print_recorded_data(Records, N);
-		for (uint32_t i = 0; i < N; i++)
-		{
-			Records[i].clean_record_data();
-		}
-
-		free(Records);
-	}
-	else 
-	{
-		return -1;
-	}
-
-	return 0;
 }
