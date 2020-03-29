@@ -58,6 +58,15 @@ void print_recorded_data(Record* Records, int num_of_records)
 	for (int i = 0; i < num_of_records; i++)
 	{
 		Records[i].print_date(i+1);
+		for(int j=0; j< Records[i].num_of_companies ; j++)
+		{
+			Records[i].Companies[j].print_company_name(j);
+			for(int k =0; k < Records[i].Companies[j].num_of_positions; k++)
+			{
+				Records[i].Companies[j].Positions[k].print_position_name(k);
+			}
+		}
+
 	}
 }
 
