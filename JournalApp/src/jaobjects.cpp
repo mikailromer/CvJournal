@@ -3,13 +3,11 @@
 #include <cstring>
 #include <cstdlib>
 
-
-
 void Record::clean_record_data()
 {
 	for(int i = 0; i < num_of_companies; i++)
 	{
-		free(Companies[i].Positions);
+		Companies[i].clean_company_data();
 	}
 	free(Companies);
 }
@@ -40,8 +38,7 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
 	for (;;)
 	{
 		fgets(row, sizeof(row), cv_list);
-		if (strstr(row, "Date: ") || feof(cv_list)) break;
-		
+
 		p = strstr(row, "Company: ");
 		if (p)
 		{
@@ -50,7 +47,9 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
 			Companies[comp_num].set_name(p);
 			Companies[comp_num].calculate_num_of_positions(cv_list, ftell(cv_list));
 			Companies[comp_num].set_positions_list(cv_list, ftell(cv_list));
-		}			
+		}
+
+		if (strstr(row, "Date: ") || feof(cv_list)) break;
 	}
 	fseek(cv_list, point_pos, SEEK_SET);
 
@@ -66,8 +65,19 @@ void Record::set_date(int* date)
 
 void Record::print_date(int record_num)
 {
+	printf("\n");
 	printf("Record No.%i\n",record_num);
 	printf("Date: %i.%i.%i\n", day, month, year);
+}
+
+void Record::print_companies()
+{
+	printf("\n");
+	for(int i = 0; i < num_of_companies; i++)
+	{
+		printf("\tCompany No.%i: %s\n",i, Companies[i].get_name());
+		Companies[i].print_positions();
+	}
 }
 int Company::calculate_num_of_positions(FILE* cv_list, int point_pos)
 {
@@ -96,7 +106,6 @@ void Company::set_positions_list(FILE* cv_list, int point_pos)
 	for (;;)
 	{
 		fgets(row, sizeof(row), cv_list);
-		if (strstr(row, "Date: ") || strstr(row, "Company: ") || feof(cv_list)) break;
 		p = strstr(row, "Position: ");
 		if (p)
 		{
@@ -104,6 +113,8 @@ void Company::set_positions_list(FILE* cv_list, int point_pos)
 			position_num++;
 			Positions[position_num].set_position_name(p);
 		}
+		if (strstr(row, "Date: ") || strstr(row, "Company: ") || feof(cv_list)) break;
+
 	}
 
 	fseek(cv_list, point_pos, SEEK_SET);
@@ -115,18 +126,32 @@ void Company::set_name(const char* name)
 	company_name[strlen(company_name) - 1] = '\0';
 }
 
-void Company::print_company_name(int comp_num)
+char* Company::get_name()
 {
-	printf("\tCompany No.%i: $s\n",comp_num, company_name);
+	return company_name;
 }
 
+void Company::print_positions()
+{
+	for(int i = 0; i<num_of_positions;i++)
+	{
+		printf("\t\tPosition No.%i: %s\n",i, Positions[i].get_position());
+	}
+}
+
+void Company::clean_company_data()
+{
+	free(Positions);
+}
+
+char* Position::get_position()
+{
+	return position_name;
+}
 void Position::set_position_name(const char* name)
 {
 	strcpy(position_name, name);
 	position_name[strlen(position_name) - 1] = '\0';
 }
 
-void Position::print_position_name(int pos_num)
-{
-	printf("\t\tPosition No.%i: $s\n",pos_num, position_name);
-}
+
