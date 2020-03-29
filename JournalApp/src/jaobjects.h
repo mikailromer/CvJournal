@@ -8,7 +8,7 @@ class Position
 private:
 	char position_name[100];
 public:
-	void get_position();
+	char* get_position();
 	void set_position_name(const char* name);
 	void print_position_name(int pos_name);
 };
@@ -24,9 +24,11 @@ public:
 	Company();
 	~Company();
 	void set_name(const char *name);
+	char* get_name();
 	int calculate_num_of_positions(FILE* cv_list, int point_pos);
 	void set_positions_list(FILE* cv_list, int point_pos);
-	void print_company_name(int comp_num);
+	void print_positions();
+	void clean_company_data();
 };
 
 class Record
@@ -36,7 +38,9 @@ public:
 	int set_list_of_companies(FILE* cv_list, int point_pos);
 	void set_date(int* date);
 	void print_date(int record_num);
+	void print_companies();
 	void clean_record_data();
+
 	Record();
 	~Record();
 
