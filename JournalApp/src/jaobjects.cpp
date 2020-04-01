@@ -5,10 +5,6 @@
 
 Record::Record()
 {
-    day = 0;
-    month = 0;
-    year = 0;
-    num_of_companies = 0;
     Companies = NULL;
 }
 
@@ -38,16 +34,18 @@ int Record::get_year()
 
 int Record::get_num_of_companies(FILE* cv_list, int point_pos, bool getFromCvList)
 {
+    num_of_companies = 0;
     if(getFromCvList)
     {
         char row[100];
-        int i = 0;
         for (;;)
         {
             fgets(row, sizeof(row), cv_list);
-            if (strstr(row, "Company: "))num_of_companies++;
+            if (strstr(row, "Company:"))num_of_companies++;
             if (strstr(row, "Date: ") || feof(cv_list)) break;
+            memset(row,'\0', sizeof(row));
         }
+
         fseek(cv_list, point_pos, SEEK_SET);
     }
 
@@ -57,7 +55,6 @@ int Record::get_num_of_companies(FILE* cv_list, int point_pos, bool getFromCvLis
 int Record::set_list_of_companies(FILE *cv_list, int point_pos)
 {
     char row[100];
-    int N;
     int comp_num = -1;
     char* p;
     Companies = (Company*) malloc(sizeof(Company) * num_of_companies);
@@ -76,6 +73,7 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
         }
 
         if (strstr(row, "Date: ") || feof(cv_list)) break;
+        memset(row,'\0',sizeof(row));
     }
     fseek(cv_list, point_pos, SEEK_SET);
 
@@ -131,7 +129,7 @@ void Record::print_companies()
     printf("\n");
     for(int i = 0; i < num_of_companies; i++)
     {
-        printf("\tCompany No.%i: %s\n",i, Companies[i].get_name());
+        printf("\tCompany No.%i: %s\n",i + 1, Companies[i].get_name());
         Companies[i].print_positions();
     }
 }
@@ -148,20 +146,20 @@ void Record::save_new_companies_in_cv_list(FILE* cv_list)
 Company::Company()
 {
     Positions = NULL;
-    num_of_positions = 0;
 }
 
 int Company::get_num_of_positions(FILE* cv_list, int point_pos, bool getFromCvList)
 {
+    num_of_positions = 0;
     if(getFromCvList)
     {
         char row[100];
-        int i = 0;
         for (;;)
         {
             fgets(row, sizeof(row), cv_list);
             if (strstr(row, "Position: ")) num_of_positions++;
             if (strstr(row, "Date: ") || strstr(row,"Company: ") || feof(cv_list)) break;
+            memset(row,'\0', sizeof(row));
         }
         fseek(cv_list, point_pos, SEEK_SET);
     }
@@ -190,9 +188,7 @@ void Company::set_positions_list(FILE* cv_list, int point_pos)
 {
     char row[100];
     char* p;
-    int i = 0;
     int position_num = -1;
-
     Positions = (Position*) malloc(sizeof(Position) * num_of_positions);
     for (;;)
     {
@@ -205,7 +201,7 @@ void Company::set_positions_list(FILE* cv_list, int point_pos)
             Positions[position_num].set_position_name(p);
         }
         if (strstr(row, "Date: ") || strstr(row, "Company: ") || feof(cv_list)) break;
-
+        memset(row,'\0',sizeof(row));
     }
 
     fseek(cv_list, point_pos, SEEK_SET);
@@ -224,15 +220,15 @@ char* Company::get_name()
 
 void Company::print_positions()
 {
-    for(int i = 0; i<num_of_positions;i++)
+    for(uint i = 0; i<num_of_positions;i++)
     {
-        printf("\t\tPosition No.%i: %s\n",i, Positions[i].get_position());
+        printf("\t\tPosition No.%i: %s\n", i + 1, Positions[i].get_position());
     }
 }
 
 void Company::save_new_positions_in_cv_list(FILE* cv_list)
 {
-    for(int i = 0; i < num_of_positions; i++)
+    for(uint i = 0; i < num_of_positions; i++)
     {
         fprintf(cv_list, "\n\t\tPosition: %s",Positions[i].get_position());
     }
@@ -248,6 +244,7 @@ char* Position::get_position()
 {
     return position_name;
 }
+
 void Position::set_position_name(const char* name)
 {
     strcpy(position_name, name);
