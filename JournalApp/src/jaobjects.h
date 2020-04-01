@@ -53,7 +53,7 @@ public:
 private:
     uint8_t day;
     uint8_t month;
-    uint64_t year;
+    uint32_t year;
     Company *Companies;
     int num_of_companies;
 };
