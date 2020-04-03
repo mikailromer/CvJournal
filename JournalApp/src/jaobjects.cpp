@@ -90,7 +90,7 @@ int Record::add_new_companies(int num_of_new_comps)
     int num_of_new_pos;
     for(int i = num_of_companies; i < num_of_companies + num_of_new_comps; i++)
     {
-        system("cls");
+        system("clear");
         printf("Type the name of company: \n");
         fgets(row, 100, stdin);
         Companies[i].set_name(row);
@@ -98,15 +98,18 @@ int Record::add_new_companies(int num_of_new_comps)
         memset(row,'\0', sizeof(row));
         do
         {
-            system("cls");
+            system("clear");
             printf("You need to add at least one job position. \n");
             printf("Do you want to add a new job position [Y/N]? \n");
-            choice = getchar();
+            choice = getc(stdin);
+            getchar();
             if(choice == 'Y') num_of_new_pos++;
         } while(choice != 'N' && num_of_new_pos!=0);
+        Companies[i].get_num_of_positions(NULL, 0, false);
         Companies[i].add_new_positions(num_of_new_pos);
     }
 
+    num_of_companies+= num_of_new_comps;
     return 0;
 }
 
@@ -167,21 +170,23 @@ int Company::get_num_of_positions(FILE* cv_list, int point_pos, bool getFromCvLi
     return num_of_positions;
 }
 
-int Company::add_new_positions(int num_of_pos)
+int Company::add_new_positions(int num_of_new_pos)
 {
     char row[100];
-    Positions = (Position*) realloc(Positions, sizeof(Position) * num_of_pos);
-    for(int i = 0; i < num_of_pos; i++)
+    Positions = (Position*) realloc(Positions, sizeof(Position) *
+    		(num_of_positions + num_of_new_pos));
+    for(int i = num_of_positions; i < num_of_positions + num_of_new_pos; i++)
     {
-        system("cls");
-        printf("You need to give %i positions: \n", num_of_pos);
+        system("clear");
+        printf("You need to give %i positions: \n", num_of_new_pos);
         printf("Type the name of the position No.%i: \n", i+1);
         fgets(row, 100, stdin);
         Positions[i].set_position_name(row);
         memset(row, '\0', sizeof(row));
     }
 
-    return num_of_pos;
+    num_of_positions += num_of_new_pos;
+    return num_of_positions;
 }
 
 void Company::set_positions_list(FILE* cv_list, int point_pos)
