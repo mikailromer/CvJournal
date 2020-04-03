@@ -8,7 +8,7 @@
 
 void print_record_data(Record* Records, int rec_num);
 void print_all_recorded_data(Record* Records, int num_of_records);
-int add_new_record(const char* filename, Record *cv_records, uint* number_of_records);
+int add_new_record(const char* filename);
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records);
 int num_of_records(const char* filename);
 
@@ -17,18 +17,20 @@ int num_of_records(const char* filename);
 int main()
 {
 
-    Record* Records;
+    Record* Records = NULL;
     const char* filename = "src/cv_list.txt";
     uint32_t N = num_of_records(filename);
 
     if (N)
     {
-        Records = (Record*) malloc(sizeof(Record) * N);
+        Records = (Record*) realloc(Records, sizeof(Record) * N);
         parse_cv_list(filename, Records, N);
-        add_new_record(filename, Records, &N);
+        add_new_record(filename);
         //print_record_data(Records, 21);
         //print_all_recorded_data(Records, N);
-
+        N = num_of_records(filename);
+        Records = (Record*) realloc(Records, sizeof(Record) * N);
+        parse_cv_list(filename, Records, N);
         for (uint32_t i = 0; i < N; i++)
         {
             Records[i].clean_record_data();
@@ -59,26 +61,26 @@ void print_all_recorded_data(Record* Records, int num_of_records)
     }
 }
 
-int add_new_record(const char* filename, Record* Records, uint* number_of_records)
+int add_new_record(const char* filename)
 {
     char row[100];
     char* p;
-    int choice;
+    char choice;
     int num_of_comps = 0;
     int date[3];
 
+
     system("clear");
     printf("Give date in the following format - DD/MM/YYYY: ");
-    fgets(row, 11, stdin);
-
+    fgets(row, 100, stdin);
     if(row[2] != '/' || row[5] != '/')
     {
         return 1;
     }
 
-    for(int i = 0; i < 10; i++)
+    for(int j = 0; j < 10;j++)
     {
-        if(!(isdigit(row[i])) && i!= 2 && i!=5){
+        if(!(isdigit(row[j])) && j!= 2 && j!=5){
             return 1;
         }
     }
@@ -98,26 +100,32 @@ int add_new_record(const char* filename, Record* Records, uint* number_of_record
     do
     {
         system("clear");
+
         printf("Number of added companies to the new record: %i \n", num_of_comps);
         printf("Do you want to add a new company [Y/N]: ");
-        choice = getchar();
+        choice = getc(stdin);
+        getchar();
         if(choice == 'Y')num_of_comps++;
         else if(choice == 'N' && num_of_comps == 0)return 1;
     } while(choice != 'N');
 
-    (*number_of_records)++;
-    Records = (Record*) realloc(Records, sizeof(Record) * (*number_of_records) );
-    Records[*number_of_records -1].set_date(date);
-    Records->add_new_companies(num_of_comps);
+    Record new_record;
+    //Records = (Record*) realloc(Records, sizeof(Record) * (*number_of_records) );
+    new_record.set_date(date);
+    new_record.get_num_of_companies(NULL, 0, false);
+    new_record.add_new_companies(num_of_comps);
 
-    FILE* cv_list = fopen(filename, "a");
-    fprintf(cv_list, "\nDate: %i.%i.%i", Records[*number_of_records -1].get_day()
-        , Records[*number_of_records -1].get_month(),
-        Records[*number_of_records -1].get_year());
+    FILE* cv_list;
+    cv_list = fopen(filename, "a");
+    fprintf(cv_list, "\n");
+    fprintf(cv_list, "Date: %02i.%02i.%i", new_record.get_day()
+        , new_record.get_month(),
+		new_record.get_year());
 
-    Records[*number_of_records -1].save_new_companies_in_cv_list(cv_list);
+    new_record.save_new_companies_in_cv_list(cv_list);
 
     fclose(cv_list);
+    new_record.clean_record_data();
 
     return 0;
 }
