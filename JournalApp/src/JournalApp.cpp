@@ -11,6 +11,7 @@ void print_all_recorded_data(Record* Records, int num_of_records);
 int add_new_record(const char* filename);
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records);
 int num_of_records(const char* filename);
+int initialize_cv_list_file(const char* filename);
 
 
 
@@ -18,30 +19,44 @@ int main()
 {
 
     Record* Records = NULL;
+    uint32_t sum_of_records;
     const char* filename = "src/cv_list.txt";
-    uint32_t N = num_of_records(filename);
-
-    if (N)
+    FILE* cv_list = fopen(filename,"r");
+    char choice;
+    int rc;
+    if(!cv_list)
     {
-        Records = (Record*) realloc(Records, sizeof(Record) * N);
-        parse_cv_list(filename, Records, N);
-        add_new_record(filename);
-        //print_record_data(Records, 21);
-        //print_all_recorded_data(Records, N);
-        N = num_of_records(filename);
-        Records = (Record*) realloc(Records, sizeof(Record) * N);
-        parse_cv_list(filename, Records, N);
-        for (uint32_t i = 0; i < N; i++)
-        {
-            Records[i].clean_record_data();
-        }
-
-        free(Records);
+        printf("The cv_list.txt file doesnt't exist.\n");
+        printf("It will be created in the src directory.\n");
+        rc = initialize_cv_list_file(filename);
+        if(rc) return 1;
     }
-    else
+    else if(cv_list && num_of_records(filename) == 0)
     {
-        return -1;
+        rc = initialize_cv_list_file(filename);
+        if(rc) return 1;
     }
+    else fclose(cv_list);
+
+    sum_of_records = num_of_records(filename);
+
+
+    Records = (Record*) realloc(Records, sizeof(Record) * N);
+    parse_cv_list(filename, Records, N);
+    add_new_record(filename);
+    //print_record_data(Records, 21);
+    //print_all_recorded_data(Records, N);
+    N = num_of_records(filename);
+    Records = (Record*) realloc(Records, sizeof(Record) * N);
+    parse_cv_list(filename, Records, N);
+    for (uint32_t i = 0; i < N; i++)
+    {
+        Records[i].clean_record_data();
+    }
+
+    free(Records);
+
+
 
     return 0;
 }
@@ -110,7 +125,6 @@ int add_new_record(const char* filename)
     } while(choice != 'N');
 
     Record new_record;
-    //Records = (Record*) realloc(Records, sizeof(Record) * (*number_of_records) );
     new_record.set_date(date);
     new_record.get_num_of_companies(NULL, 0, false);
     new_record.add_new_companies(num_of_comps);
@@ -120,7 +134,7 @@ int add_new_record(const char* filename)
     fprintf(cv_list, "\n");
     fprintf(cv_list, "Date: %02i.%02i.%i", new_record.get_day()
         , new_record.get_month(),
-		new_record.get_year());
+        new_record.get_year());
 
     new_record.save_new_companies_in_cv_list(cv_list);
 
@@ -132,7 +146,7 @@ int add_new_record(const char* filename)
 
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records)
 {
-    FILE* cv_list =fopen(filename, "r") ;
+    FILE* cv_list =fopen(filename, "r");
     if (!cv_list)
     {
         printf("Cannot open file %s.\n", filename);
@@ -200,4 +214,41 @@ int num_of_records(const char* filename)
     }
     fclose(cv_list);
     return rec_num;
+}
+
+int initialize_cv_list_file(const char* filename)
+{
+    FILE* cv_list = fopen(filename, "w");
+    char choice;
+    cv_list = fopen(filename,"w");
+    if(!cv_list)
+    {
+        printf("File cv_list.txt hasn't been created.");
+        return 1;
+    }
+    fprintf(cv_list, "!!!CV List!!!\n");
+    fclose(cv_list);
+    printf("There is no records in the cv_list file.\n");
+    printf("You have 2 options to chose: \n");
+    printf("1 Add the first record to the CV list.\n");
+    printf("2 Exit the program.\n");
+    printf("Chose your option: ");
+    do{
+        choice = getc(stdin);
+        getchar();
+    }while (choice != '1' && choice != '2');
+
+    if(choice == '1')
+    {
+        printf("Option No.1 has been chosen.\n");
+        printf("The new record will be added to the Cv list.\n");
+        add_new_record(filename);
+        return 0;
+    }
+    else
+    {
+        printf("Option No.2 has been chosen.\n");
+        printf("Program stops its work.\n");
+        return 1;
+    }
 }
