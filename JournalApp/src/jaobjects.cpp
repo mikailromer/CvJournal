@@ -174,7 +174,7 @@ int Company::add_new_positions(int num_of_new_pos)
 {
     char row[100];
     Positions = (Position*) realloc(Positions, sizeof(Position) *
-    		(num_of_positions + num_of_new_pos));
+            (num_of_positions + num_of_new_pos));
     for(int i = num_of_positions; i < num_of_positions + num_of_new_pos; i++)
     {
         system("clear");
