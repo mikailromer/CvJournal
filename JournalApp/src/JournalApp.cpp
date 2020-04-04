@@ -12,7 +12,7 @@ int add_new_record(const char* filename);
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records);
 int num_of_records(const char* filename);
 int initialize_cv_list_file(const char* filename);
-
+int clean_record_table(Record* Records);
 
 
 int main()
@@ -23,7 +23,7 @@ int main()
     const char* filename = "src/cv_list.txt";
     FILE* cv_list = fopen(filename,"r");
     char choice;
-    int rc;
+    int rc, num;
     if(!cv_list)
     {
         printf("The cv_list.txt file doesnt't exist.\n");
@@ -39,24 +39,53 @@ int main()
     else fclose(cv_list);
 
     sum_of_records = num_of_records(filename);
+    Records = (Record*) realloc(Records, sizeof(Record) * sum_of_records);
+    parse_cv_list(filename,Records, sum_of_records);
 
+    do{
+        printf("The CV Journal application has been properly initialized.\n");
+        printf("Number of records present in CV list: %i\n", );
+        printf("You have 5 options to chose: \n");
+        printf("1 Print the chosen record's data.\n");
+        printf("2 Print all of the records data.\n");
+        printf("3 Add the new record to the Cv list.\n");
+        printf("4 Exit the program.\n");
+        choice = getc(stdin);
+        getchar();
 
-    Records = (Record*) realloc(Records, sizeof(Record) * N);
-    parse_cv_list(filename, Records, N);
-    add_new_record(filename);
-    //print_record_data(Records, 21);
-    //print_all_recorded_data(Records, N);
-    N = num_of_records(filename);
-    Records = (Record*) realloc(Records, sizeof(Record) * N);
-    parse_cv_list(filename, Records, N);
-    for (uint32_t i = 0; i < N; i++)
-    {
-        Records[i].clean_record_data();
-    }
+        switch (choice)
+        {
+        case '1':
+            do{
+                printf("Give the chosen record's index from 1 - %i:",sum_of_records);
+                choice = getc(stdin);
+                getchar();
+                num = atoi(&choice);
+            }while(num < 1 || num > sum_of_records);
+            print_record_data(Records, num);
+            break;
 
-    free(Records);
+        case '2':
+            print_all_recorded_data(Records, sum_of_records);
+            break;
 
+        case '3':
+            clean_record_table(Records);
+            add_new_record(filename);
+            sum_of_records++;
+            Records = (Record*) realloc(Records, sizeof(Record) * sum_of_records);
+            parse_cv_list(filename, Records, sum_of_records);
+            break;
 
+        case '4':
+            printf("CV Journal Application is turning off.\n");
+            clean_record_table(Records);
+            return 0;
+
+        default:
+            break;
+        }
+    }while(choice != '4');
 
     return 0;
 }
@@ -251,4 +280,16 @@ int initialize_cv_list_file(const char* filename)
         printf("Program stops its work.\n");
         return 1;
     }
+}
+
+int clean_record_table(Record* Records)
+{
+    for (uint32_t i = 0; i < N; i++)
+    {
+        Records[i].clean_record_data();
+    }
+
+    free(Records);
+
+    return 0;
 }
