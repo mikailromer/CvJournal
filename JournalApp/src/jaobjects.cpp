@@ -15,6 +15,12 @@ void Record::clean_record_data()
         Companies[i].clean_company_data();
     }
     free(Companies);
+
+    Companies = NULL;
+    num_of_companies = NULL;
+    day = NULL;
+    month = NULL;
+    year = NULL;
 }
 
 int Record::get_day()
@@ -81,30 +87,39 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
 }
 
 int Record::add_new_companies(int num_of_new_comps)
-{   
+{
     Companies = (Company*) realloc(Companies, sizeof(Company) * 
     (num_of_companies + num_of_new_comps));
 
+    if(!Companies)
+    {
+        printf("Memory allocation for Companies class variable has failed.\n");
+        return -1;
+    }
     char row[100];
     char choice;
     int num_of_new_pos;
     for(int i = num_of_companies; i < num_of_companies + num_of_new_comps; i++)
     {
-        system("clear");
-        printf("Type the name of company: \n");
+       // system("clear");
+        printf("\nNumber of companies added to the record: %i.\n",
+                num_of_companies + num_of_new_comps);
+        printf("Type the name of Company No.%i: ", i+1);
         fgets(row, 100, stdin);
         Companies[i].set_name(row);
         num_of_new_pos = 0;
         memset(row,'\0', sizeof(row));
         do
         {
-            system("clear");
-            printf("You need to add at least one job position. \n");
-            printf("Do you want to add a new job position [Y/N]? \n");
+            //system("clear");
+            printf("\nYou need to add at least one job position.\n");
+            printf("Number of positions assigned to the company: %i.\n",
+                    num_of_new_pos);
+            printf("Do you want to add a new job position [Y/N]? ");
             choice = getc(stdin);
             getchar();
             if(choice == 'Y') num_of_new_pos++;
-        } while(choice != 'N' && num_of_new_pos!=0);
+        } while(choice != 'N' || num_of_new_pos == 0);
         Companies[i].get_num_of_positions(NULL, 0, false);
         Companies[i].add_new_positions(num_of_new_pos);
     }
@@ -175,18 +190,23 @@ int Company::add_new_positions(int num_of_new_pos)
     char row[100];
     Positions = (Position*) realloc(Positions, sizeof(Position) *
             (num_of_positions + num_of_new_pos));
-    for(int i = num_of_positions; i < num_of_positions + num_of_new_pos; i++)
+    if(!Positions)
     {
-        system("clear");
-        printf("You need to give %i positions: \n", num_of_new_pos);
-        printf("Type the name of the position No.%i: \n", i+1);
+        printf("Memory allocation for Positions class variable has failed.\n");
+        return -1;
+    }
+
+    for(uint i = num_of_positions; i < num_of_positions + num_of_new_pos; i++)
+    {
+        printf("\nYou need to give %i positions.\n", num_of_new_pos);
+        printf("Type the name of the position No.%i: ", i+1);
         fgets(row, 100, stdin);
         Positions[i].set_position_name(row);
         memset(row, '\0', sizeof(row));
     }
 
     num_of_positions += num_of_new_pos;
-    return num_of_positions;
+    return 0;
 }
 
 void Company::set_positions_list(FILE* cv_list, int point_pos)
@@ -225,7 +245,7 @@ char* Company::get_name()
 
 void Company::print_positions()
 {
-    for(uint i = 0; i<num_of_positions;i++)
+    for(uint i = 0; i < num_of_positions; i++)
     {
         printf("\t\tPosition No.%i: %s\n", i + 1, Positions[i].get_position());
     }
@@ -242,7 +262,15 @@ void Company::save_new_positions_in_cv_list(FILE* cv_list)
 
 void Company::clean_company_data()
 {
+    for(uint i = 0; i < num_of_positions; i++)
+    {
+        Positions[i].clean_position();
+    }
     free(Positions);
+
+    Positions = NULL;
+    num_of_positions = NULL;
+    memset(company_name,'\0', sizeof(company_name));
 }
 
 char* Position::get_position()
@@ -254,6 +282,12 @@ void Position::set_position_name(const char* name)
 {
     strcpy(position_name, name);
     position_name[strlen(position_name) - 1] = '\0';
+}
+
+int Position::clean_position()
+{
+    memset(position_name, '\0', sizeof(position_name));
+    return 0;
 }
 
 
