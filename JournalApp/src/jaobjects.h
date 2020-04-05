@@ -11,6 +11,7 @@ public:
     char* get_position();
     void set_position_name(const char* name);
     void print_position_name(int pos_name);
+    int clean_position();
 };
 
 class Company
