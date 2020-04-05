@@ -12,7 +12,7 @@ int add_new_record(const char* filename);
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records);
 int num_of_records(const char* filename);
 int initialize_cv_list_file(const char* filename);
-int clean_record_table(Record* Records);
+int clean_record_table(Record* Records, int sum_of_records);
 
 
 int main()
@@ -43,13 +43,14 @@ int main()
     parse_cv_list(filename,Records, sum_of_records);
 
     do{
-        printf("The CV Journal application has been properly initialized.\n");
-        printf("Number of records present in CV list: %i\n", );
+        printf("\nThe CV Journal application has been properly initialized.\n");
+        printf("Number of records present in CV list: %i\n", sum_of_records);
         printf("You have 5 options to chose: \n");
         printf("1 Print the chosen record's data.\n");
         printf("2 Print all of the records data.\n");
         printf("3 Add the new record to the Cv list.\n");
-        printf("4 Exit the program.\n");
+        printf("4 Exit the program.\n\n");
+        printf("Make your choice: ");
         choice = getc(stdin);
         getchar();
 
@@ -57,7 +58,7 @@ int main()
         {
         case '1':
             do{
-                printf("Give the chosen record's index from 1 - %i:",sum_of_records);
+                printf("\nGive the chosen record's index from 1 - %i:",sum_of_records);
                 choice = getc(stdin);
                 getchar();
                 num = atoi(&choice);
@@ -70,7 +71,14 @@ int main()
             break;
 
         case '3':
-            clean_record_table(Records);
+            for (uint i = 0; i < sum_of_records; i++)
+            {
+                Records[i].clean_record_data();
+            }
+
+            free(Records);
+            Records = NULL;
+
             add_new_record(filename);
             sum_of_records++;
             Records = (Record*) realloc(Records, sizeof(Record) * sum_of_records);
@@ -78,9 +86,9 @@ int main()
             break;
 
         case '4':
-            printf("CV Journal Application is turning off.\n");
-            clean_record_table(Records);
-            return 0;
+            printf("\nCV Journal Application is turning off.\n");
+            clean_record_table(Records, sum_of_records);
+            break;
 
         default:
             break;
@@ -114,18 +122,18 @@ int add_new_record(const char* filename)
     int date[3];
 
 
-    system("clear");
-    printf("Give date in the following format - DD/MM/YYYY: ");
+    //system("clear");
+    printf("\nGive date in the following format - DD/MM/YYYY: ");
     fgets(row, 100, stdin);
     if(row[2] != '/' || row[5] != '/')
     {
-        return 1;
+        return -1;
     }
 
     for(int j = 0; j < 10;j++)
     {
         if(!(isdigit(row[j])) && j!= 2 && j!=5){
-            return 1;
+            return -1;
         }
     }
 
@@ -143,9 +151,8 @@ int add_new_record(const char* filename)
 
     do
     {
-        system("clear");
-
-        printf("Number of added companies to the new record: %i \n", num_of_comps);
+        //system("clear");
+        printf("\nNumber of added companies to the new record: %i \n", num_of_comps);
         printf("Do you want to add a new company [Y/N]: ");
         choice = getc(stdin);
         getchar();
@@ -166,10 +173,9 @@ int add_new_record(const char* filename)
         new_record.get_year());
 
     new_record.save_new_companies_in_cv_list(cv_list);
-
-    fclose(cv_list);
     new_record.clean_record_data();
 
+    fclose(cv_list);
     return 0;
 }
 
@@ -282,9 +288,9 @@ int initialize_cv_list_file(const char* filename)
     }
 }
 
-int clean_record_table(Record* Records)
+int clean_record_table(Record* Records, int sum_of_records )
 {
-    for (uint32_t i = 0; i < N; i++)
+    for (int i = 0; i < sum_of_records; i++)
     {
         Records[i].clean_record_data();
     }
