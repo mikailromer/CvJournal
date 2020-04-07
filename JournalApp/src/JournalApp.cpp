@@ -9,7 +9,7 @@
 void print_record_data(Record* Records, int rec_num);
 void print_all_recorded_data(Record* Records, int num_of_records);
 int add_new_record(const char* filename);
-int update_cv_list(const char* filename, Record* Records, int rec_index, int sum_of_records);
+int update_record(const char* filename, Record** Records, int rec_index, int sum_of_records);
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records);
 int num_of_records(const char* filename);
 int initialize_cv_list_file(const char* filename);
@@ -24,6 +24,7 @@ int main()
     const char* filename = "src/cv_list.txt";
     FILE* cv_list = fopen(filename,"r");
     char choice;
+    char chosen_rec_num[4];
     int rc, num;
     if(!cv_list)
     {
@@ -90,9 +91,8 @@ int main()
         case '4':
             do{
                 printf("\nGive the chosen record's index from 1 - %i:",sum_of_records);
-                choice = getc(stdin);
-                getchar();
-                num = atoi(&choice);
+                fgets(chosen_rec_num, sizeof(chosen_rec_num), stdin);
+                num = atoi(chosen_rec_num);
             }while(num < 1 || num > sum_of_records);
             
             update_record(filename, &Records, num, sum_of_records);
@@ -174,7 +174,7 @@ int add_new_record(const char* filename)
 
     Record new_record;
     new_record.set_date(date);
-    new_record.get_num_of_companies(NULL, 0, false);
+    new_record.get_num_of_companies(NULL, 0, false, true);
     new_record.add_new_companies(num_of_comps);
 
     FILE* cv_list;
@@ -215,7 +215,7 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
     }
     fclose(cv_list);
 
-    num_of_comps = (*Records)[rec_index-1].get_num_of_companies(NULL, 0 ,false);
+    num_of_comps = (*Records)[rec_index-1].get_num_of_companies(NULL, 0 ,false, false);
 
     do
     {
@@ -283,7 +283,7 @@ int parse_cv_list(const char* filename, Record *cv_records, int number_of_record
 
             rec_num++;
             cv_records[rec_num].set_date(date);
-            N = cv_records[rec_num].get_num_of_companies(cv_list, ftell(cv_list) , true);
+            N = cv_records[rec_num].get_num_of_companies(cv_list, ftell(cv_list) , true, false);
             cv_records[rec_num].set_list_of_companies(cv_list, ftell(cv_list));
         }
 
