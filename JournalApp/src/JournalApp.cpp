@@ -247,14 +247,16 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
 
             (*Records)[rec_index-1].add_new_companies(num_of_comps);
             break;
-        
+
         case '2':
             do{
                 printf("\nGive the chosen company's index from 1 - %i:",num_of_comps);
                 fgets(chosen_comp_num, sizeof(chosen_comp_num), stdin);
                 num = atoi(chosen_comp_num);
             }while(num < 1 || num > sum_of_records);
+
             (*Records)[rec_index-1].update_company(num);
+
         default:
             break;
         }
