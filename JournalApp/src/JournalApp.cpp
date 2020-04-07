@@ -62,10 +62,11 @@ int main()
         case '1':
             do{
                 printf("\nGive the chosen record's index from 1 - %i:",sum_of_records);
-                choice = getc(stdin);
-                getchar();
-                num = atoi(&choice);
+                fgets(chosen_rec_num, sizeof(chosen_rec_num), stdin);
+                num = atoi(chosen_rec_num);
+                memset(chosen_rec_num, '\0', sizeof(chosen_rec_num));
             }while(num < 1 || num > sum_of_records);
+            
             print_record_data(Records, num);
             break;
 
@@ -93,6 +94,7 @@ int main()
                 printf("\nGive the chosen record's index from 1 - %i:",sum_of_records);
                 fgets(chosen_rec_num, sizeof(chosen_rec_num), stdin);
                 num = atoi(chosen_rec_num);
+                memset(chosen_rec_num, '\0', sizeof(chosen_rec_num));
             }while(num < 1 || num > sum_of_records);
             
             update_record(filename, &Records, num, sum_of_records);
@@ -196,8 +198,10 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
     int i = 1;
     int point_pos = 0;
     int num_of_comps = 0;
+    int num;
     char row[100];
     char choice;
+    char chosen_comp_num[4];
 
     FILE* cv_list;
     cv_list = fopen(filename, "r");
@@ -221,15 +225,41 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
     {
         //system("clear");
         printf("\nRecord No.%i is updated.\n", rec_index);
-        printf("\nNumber of companies assigned to the updated record: %i \n", num_of_comps);
-        printf("Do you want to add a new company [Y/N]: ");
+        printf("Do you want to:\n");
+        printf("1) Add new companies to the record?\n");
+        printf("2) Update existing company in the record?\n");
+        printf("Make your choice: ");
         choice = getc(stdin);
         getchar();
-        if(choice == 'Y')num_of_comps++;
-        else if(choice == 'N' && num_of_comps == 0)return 1;
-    } while(choice != 'N');
+        switch (choice)
+        {
+        case '1':
+            do
+            {
+                //system("clear");
+                printf("\nNumber of companies assigned to the updated record: %i \n", num_of_comps);
+                printf("Do you want to add a new company [Y/N]: ");
+                choice = getc(stdin);
+                getchar();
+                if(choice == 'Y')num_of_comps++;
+                else if(choice == 'N' && num_of_comps == 0)return 1;
+            } while(choice != 'N');
 
-    (*Records)[rec_index-1].add_new_companies(num_of_comps);
+            (*Records)[rec_index-1].add_new_companies(num_of_comps);
+            break;
+        
+        case '2':
+            do{
+                printf("\nGive the chosen company's index from 1 - %i:",num_of_comps);
+                fgets(chosen_comp_num, sizeof(chosen_comp_num), stdin);
+                num = atoi(chosen_comp_num);
+            }while(num < 1 || num > sum_of_records);
+            (*Records)[rec_index-1].update_company(num);
+        default:
+            break;
+        }
+
+    }while(choice != '1' && choice != '2');
 
     cv_list = fopen(filename, "r+");
     fseek(cv_list,point_pos, SEEK_SET);
