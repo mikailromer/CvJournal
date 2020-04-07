@@ -9,6 +9,7 @@
 void print_record_data(Record* Records, int rec_num);
 void print_all_recorded_data(Record* Records, int num_of_records);
 int add_new_record(const char* filename);
+int update_cv_list(const char* filename, Record* Records, int rec_index, int sum_of_records);
 int parse_cv_list(const char* filename, Record *cv_records, int number_of_records);
 int num_of_records(const char* filename);
 int initialize_cv_list_file(const char* filename);
@@ -49,7 +50,8 @@ int main()
         printf("1 Print the chosen record's data.\n");
         printf("2 Print all of the records data.\n");
         printf("3 Add the new record to the Cv list.\n");
-        printf("4 Exit the program.\n\n");
+        printf("4 Update existing record in the Cv list.\n");
+        printf("5 Exit the program.\n\n");
         printf("Make your choice: ");
         choice = getc(stdin);
         getchar();
@@ -86,6 +88,17 @@ int main()
             break;
 
         case '4':
+            do{
+                printf("\nGive the chosen record's index from 1 - %i:",sum_of_records);
+                choice = getc(stdin);
+                getchar();
+                num = atoi(&choice);
+            }while(num < 1 || num > sum_of_records);
+            
+            update_record(filename, &Records, num, sum_of_records);
+            break;
+
+        case '5':
             printf("\nCV Journal Application is turning off.\n");
             clean_record_table(Records, sum_of_records);
             break;
@@ -146,7 +159,6 @@ int add_new_record(const char* filename)
         i++;
     }
 
-
     memset(row, '\0', sizeof(row));
 
     do
@@ -174,6 +186,64 @@ int add_new_record(const char* filename)
 
     new_record.save_new_companies_in_cv_list(cv_list);
     new_record.clean_record_data();
+
+    fclose(cv_list);
+    return 0;
+}
+
+int update_record(const char* filename, Record** Records, int rec_index, int sum_of_records)
+{
+    int i = 1;
+    int point_pos = 0;
+    int num_of_comps = 0;
+    char row[100];
+    char choice;
+
+    FILE* cv_list;
+    cv_list = fopen(filename, "r");
+
+    for(;;)
+    {
+        fgets(row, sizeof(row), cv_list);
+        if (strstr(row, "Date:"))i++;
+        
+        memset(row,'\0', sizeof(row));
+
+        point_pos = ftell(cv_list);
+        if(i == rec_index) break;
+        if (feof(cv_list)) break;
+    }
+    fclose(cv_list);
+
+    num_of_comps = (*Records)[rec_index-1].get_num_of_companies(NULL, 0 ,false);
+
+    do
+    {
+        //system("clear");
+        printf("\nRecord No.%i is updated.\n", rec_index);
+        printf("\nNumber of companies assigned to the updated record: %i \n", num_of_comps);
+        printf("Do you want to add a new company [Y/N]: ");
+        choice = getc(stdin);
+        getchar();
+        if(choice == 'Y')num_of_comps++;
+        else if(choice == 'N' && num_of_comps == 0)return 1;
+    } while(choice != 'N');
+
+    (*Records)[rec_index-1].add_new_companies(num_of_comps);
+
+    cv_list = fopen(filename, "r+");
+    fseek(cv_list,point_pos, SEEK_SET);
+    for(int i = rec_index -1; i < sum_of_records; i++)
+    {
+        if(i != rec_index-1)
+        {
+            fprintf(cv_list, "\n");
+            fprintf(cv_list, "Date: %02i.%02i.%i", (*Records)[rec_index-1].get_day()
+                , (*Records)[rec_index-1].get_month(),
+                (*Records)[rec_index-1].get_year());
+        }
+        (*Records)[rec_index-1].save_new_companies_in_cv_list(cv_list);
+    }
 
     fclose(cv_list);
     return 0;
