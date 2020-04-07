@@ -26,7 +26,8 @@ public:
     ~Company();
     char* get_name();
     void set_name(const char *name);
-    int get_num_of_positions(FILE* cv_list, int point_pos, bool getFromCvList);
+    int get_num_of_positions(FILE* cv_list, int point_pos,
+            bool getFromCvList, bool isCompanyNew);
     int add_new_positions(int num_of_pos);
     void set_positions_list(FILE* cv_list, int point_pos);
     void print_positions();
@@ -42,9 +43,10 @@ public:
     int get_month();
     int get_year();
     int get_num_of_companies(FILE* cv_list, int point_pos,
-    		bool getFromCvList, bool isRecordNew);
+            bool getFromCvList, bool isRecordNew);
     int set_list_of_companies(FILE* cv_list, int point_pos);
     int add_new_companies(int num_of_comps);
+    int update_company(int comp_num);
 
     void set_date(int* date);
     void print_date(int record_num);
