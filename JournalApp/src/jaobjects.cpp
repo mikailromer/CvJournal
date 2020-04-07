@@ -39,10 +39,11 @@ int Record::get_year()
 }
 
 int Record::get_num_of_companies(FILE* cv_list, int point_pos,
-		bool getFromCvList, bool isRecordNew)
+        bool getFromCvList, bool isRecordNew)
 {
     if(getFromCvList)
     {
+        num_of_companies = 0;
         char row[100];
         for (;;)
         {
@@ -197,6 +198,7 @@ int Company::get_num_of_positions(FILE* cv_list, int point_pos,
 {
     if(getFromCvList)
     {
+        num_of_positions = 0;
         char row[100];
         for (;;)
         {
