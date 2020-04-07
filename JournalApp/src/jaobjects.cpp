@@ -93,7 +93,7 @@ int Record::add_new_companies(int num_of_new_comps)
 
     if(!Companies)
     {
-        printf("Memory allocation for Companies class variable has failed.\n");
+        printf("Memory reallocation for Companies class variable has failed.\n");
         return -1;
     }
     char row[100];
@@ -192,7 +192,7 @@ int Company::add_new_positions(int num_of_new_pos)
             (num_of_positions + num_of_new_pos));
     if(!Positions)
     {
-        printf("Memory allocation for Positions class variable has failed.\n");
+        printf("Memory reallocation for Positions class variable has failed.\n");
         return -1;
     }
 
