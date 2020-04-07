@@ -38,9 +38,9 @@ int Record::get_year()
     return year;
 }
 
-int Record::get_num_of_companies(FILE* cv_list, int point_pos, bool getFromCvList)
+int Record::get_num_of_companies(FILE* cv_list, int point_pos,
+		bool getFromCvList, bool isRecordNew)
 {
-    num_of_companies = 0;
     if(getFromCvList)
     {
         char row[100];
@@ -54,6 +54,7 @@ int Record::get_num_of_companies(FILE* cv_list, int point_pos, bool getFromCvLis
 
         fseek(cv_list, point_pos, SEEK_SET);
     }
+    else if(!getFromCvList && isRecordNew) num_of_companies = 0;
 
     return num_of_companies;
 }
