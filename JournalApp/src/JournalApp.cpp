@@ -256,6 +256,7 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
             }while(num < 1 || num > sum_of_records);
 
             (*Records)[rec_index-1].update_company(num);
+            break;
 
         default:
             break;
@@ -292,7 +293,6 @@ int parse_cv_list(const char* filename, Record *cv_records, int number_of_record
 
     char row[100];
     int rec_num = -1;
-
     int date[3];
     int i;
     int N;
