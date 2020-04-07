@@ -134,14 +134,15 @@ int Record::update_company(int comp_num)
 {
     char choice;
     char row[100];
-    int num_of_pos = Companies[comp_num -1].get_num_of_positions(NULL,
-        0, false, false);
+    int num_of_pos = 0;
+    int sum_of_pos = Companies[comp_num -1].get_num_of_positions(NULL, 0,
+            false, false);
     do
     {
         //system("clear");
         printf("\nCompany No.%i is updated.\n", comp_num);
         printf("Number of positions assigned to the company: %i.\n",
-                num_of_pos);
+                sum_of_pos + num_of_pos);
         printf("Do you want to add a new job position [Y/N]? ");
         choice = getc(stdin);
         getchar();
