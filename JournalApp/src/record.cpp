@@ -38,11 +38,12 @@ int Record::get_year()
     return year;
 }
 
-int Record::get_num_of_companies(FILE* cv_list, int point_pos, bool getFromCvList)
+int Record::get_num_of_companies(FILE* cv_list, int point_pos,
+        bool getFromCvList, bool isRecordNew)
 {
-    num_of_companies = 0;
     if(getFromCvList)
     {
+        num_of_companies = 0;
         char row[100];
         for (;;)
         {
@@ -54,6 +55,7 @@ int Record::get_num_of_companies(FILE* cv_list, int point_pos, bool getFromCvLis
 
         fseek(cv_list, point_pos, SEEK_SET);
     }
+    else if(!getFromCvList && isRecordNew) num_of_companies = 0;
 
     return num_of_companies;
 }
@@ -74,7 +76,7 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
             p += 9;
             comp_num++;
             Companies[comp_num].set_name(p);
-            Companies[comp_num].get_num_of_positions(cv_list, ftell(cv_list), true);
+            Companies[comp_num].get_num_of_positions(cv_list, ftell(cv_list), true, false);
             Companies[comp_num].set_positions_list(cv_list, ftell(cv_list));
         }
 
@@ -93,7 +95,7 @@ int Record::add_new_companies(int num_of_new_comps)
 
     if(!Companies)
     {
-        printf("Memory allocation for Companies class variable has failed.\n");
+        printf("Memory reallocation for Companies class variable has failed.\n");
         return -1;
     }
     char row[100];
@@ -120,11 +122,37 @@ int Record::add_new_companies(int num_of_new_comps)
             getchar();
             if(choice == 'Y') num_of_new_pos++;
         } while(choice != 'N' || num_of_new_pos == 0);
-        Companies[i].get_num_of_positions(NULL, 0, false);
+        Companies[i].get_num_of_positions(NULL, 0, false, true);
         Companies[i].add_new_positions(num_of_new_pos);
     }
 
     num_of_companies+= num_of_new_comps;
+    return 0;
+}
+
+int Record::update_company(int comp_num)
+{
+    char choice;
+    char row[100];
+    int num_of_pos = 0;
+    int sum_of_pos = Companies[comp_num -1].get_num_of_positions(NULL, 0,
+            false, false);
+    do
+    {
+        //system("clear");
+        printf("\nCompany No.%i is updated.\n", comp_num);
+        printf("Number of positions assigned to the company: %i.\n",
+                sum_of_pos + num_of_pos);
+        printf("Do you want to add a new job position [Y/N]? ");
+        choice = getc(stdin);
+        getchar();
+        if(choice == 'Y') num_of_pos++;
+    } while(choice != 'N' || num_of_pos == 0);
+
+    Companies[comp_num -1].get_num_of_positions(NULL, 0,
+        false, false);
+    Companies[comp_num -1].add_new_positions(num_of_pos);
+
     return 0;
 }
 
