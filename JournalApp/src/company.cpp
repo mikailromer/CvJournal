@@ -8,11 +8,12 @@ Company::Company()
     Positions = NULL;
 }
 
-int Company::get_num_of_positions(FILE* cv_list, int point_pos, bool getFromCvList)
+int Company::get_num_of_positions(FILE* cv_list, int point_pos,
+        bool getFromCvList, bool isCompanyNew)
 {
-    num_of_positions = 0;
     if(getFromCvList)
     {
+        num_of_positions = 0;
         char row[100];
         for (;;)
         {
@@ -23,6 +24,7 @@ int Company::get_num_of_positions(FILE* cv_list, int point_pos, bool getFromCvLi
         }
         fseek(cv_list, point_pos, SEEK_SET);
     }
+    else if(!getFromCvList && isCompanyNew) num_of_positions = 0;
 
     return num_of_positions;
 }
@@ -34,7 +36,7 @@ int Company::add_new_positions(int num_of_new_pos)
             (num_of_positions + num_of_new_pos));
     if(!Positions)
     {
-        printf("Memory allocation for Positions class variable has failed.\n");
+        printf("Memory reallocation for Positions class variable has failed.\n");
         return -1;
     }
 
