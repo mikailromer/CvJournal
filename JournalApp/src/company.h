@@ -16,7 +16,8 @@ public:
     ~Company();
     char* get_name();
     void set_name(const char *name);
-    int get_num_of_positions(FILE* cv_list, int point_pos, bool getFromCvList);
+    int get_num_of_positions(FILE* cv_list, int point_pos,
+            bool getFromCvList, bool isCompanyNew);
     int add_new_positions(int num_of_pos);
     void set_positions_list(FILE* cv_list, int point_pos);
     void print_positions();
