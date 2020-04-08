@@ -11,9 +11,11 @@ public:
     int get_day();
     int get_month();
     int get_year();
-    int get_num_of_companies(FILE* cv_list, int point_pos, bool getFromCvList);
+    int get_num_of_companies(FILE* cv_list, int point_pos,
+            bool getFromCvList, bool isRecordNew);
     int set_list_of_companies(FILE* cv_list, int point_pos);
     int add_new_companies(int num_of_comps);
+    int update_company(int comp_num);
 
     void set_date(int* date);
     void print_date(int record_num);
