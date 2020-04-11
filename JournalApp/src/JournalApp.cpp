@@ -4,7 +4,8 @@
 #include <cstdint>
 #include <cctype>
 
-#include "jaobjects.h"
+#include "record.h"
+//#include "jaobjects.h"
 
 void print_record_data(Record* Records, int rec_num);
 void print_all_recorded_data(Record* Records, int num_of_records);
@@ -212,7 +213,7 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
     {
         fgets(row, sizeof(row), cv_list);
         if (strstr(row, "Date:"))i++;
-        
+
         memset(row,'\0', sizeof(row));
 
         point_pos = ftell(cv_list);
@@ -236,9 +237,9 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
         switch (choice_update_option)
         {
         case '1':
-        	sum_of_comps = (*Records)[rec_index-1].get_num_of_companies(NULL,
-        			0,false, false);
-        	num_of_comps = 0;
+            sum_of_comps = (*Records)[rec_index-1].get_num_of_companies(NULL,
+                    0,false, false);
+            num_of_comps = 0;
             do
             {
                 //system("clear");
@@ -254,10 +255,10 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
             break;
 
         case '2':
-        	sum_of_comps = (*Records)[rec_index-1].get_num_of_companies(NULL,0,false,false);
+            sum_of_comps = (*Records)[rec_index-1].get_num_of_companies(NULL,0,false,false);
             do{
                 printf("\nGive the chosen company's index from 1 - %i:",
-                		sum_of_comps);
+                        sum_of_comps);
                 fgets(chosen_comp_num, sizeof(chosen_comp_num), stdin);
                 num = atoi(chosen_comp_num);
             }while(num < 1 || num > sum_of_comps);
@@ -278,11 +279,11 @@ int update_record(const char* filename, Record** Records, int rec_index, int sum
         if(i != rec_index-1)
         {
             fprintf(cv_list, "\n");
-            fprintf(cv_list, "Date: %02i.%02i.%i", (*Records)[rec_index-1].get_day()
-                , (*Records)[rec_index-1].get_month(),
-                (*Records)[rec_index-1].get_year());
+            fprintf(cv_list, "Date: %02i.%02i.%i", (*Records)[i].get_day()
+                , (*Records)[i].get_month(),
+                (*Records)[i].get_year());
         }
-        (*Records)[rec_index-1].save_new_companies_in_cv_list(cv_list);
+        (*Records)[i].save_new_companies_in_cv_list(cv_list);
     }
 
     fclose(cv_list);
