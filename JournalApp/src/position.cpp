@@ -10,7 +10,10 @@ char* Position::get_position()
 void Position::set_position_name(const char* name)
 {
     strcpy(position_name, name);
-    position_name[strlen(position_name) - 1] = '\0';
+    if( position_name[strlen(position_name) - 1] == '\n')
+    {
+        position_name[strlen(position_name) - 1] = '\0';
+    }
 }
 
 int Position::clean_position()
