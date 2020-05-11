@@ -48,6 +48,8 @@ int init_companies(Company** Companies, uint num_of_comps,
 		(*Companies)[i].save_new_positions_in_cv_list_ptr = save_new_positions_in_cv_list;
 		(*Companies)[i].clean_company_data_ptr = clean_company_data;
 		memset((*Companies)[i].company_name,'\0', sizeof((*Companies)[i].company_name));
+		(*Companies)[i].num_of_positions = 0;
+		(*Companies)[i].Positions = NULL;
 	}
 	return 0;
 }
