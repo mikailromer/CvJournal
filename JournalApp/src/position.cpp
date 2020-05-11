@@ -5,10 +5,10 @@
 
 static void set_position_name(char* position_name, const char* name);
 
-int init_positions(Position** Positions,int num_of_pos,
-		int num_of_new_pos)
+int init_positions(Position** Positions, uint num_of_pos,
+		uint num_of_new_pos)
 {
-	int i, begin, end;
+	uint i, begin, end;
 	if(num_of_pos == 0) *Positions = NULL;
 	*Positions = (Position*)realloc(*Positions,sizeof(Position) *
 			(num_of_pos + num_of_new_pos));
