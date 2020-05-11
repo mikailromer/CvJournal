@@ -22,6 +22,53 @@ static void save_new_companies_in_cv_list(FILE* cv_list,Company** Companies,
 static void clean_record_data(Company** Companies, uint32_t* num_of_comps,
 		uint8_t* day, uint8_t* month,  uint32_t* year);
 
+
+int init_records(Record** Records, uint num_of_recs,
+		uint num_of_new_recs)
+{
+	uint begin, end, i;
+	if(num_of_recs == 0) *Records = NULL;
+	*Records = (Record*) realloc(*Records, sizeof(Record)
+			* (num_of_recs + num_of_new_recs));
+	if(*Records == NULL)
+	{
+		printf("Memory reallocation for Records variable has failed.\n");
+		return -1;
+	}
+
+	if(num_of_recs == 0)
+	{
+		begin = 0;
+		end = num_of_recs;
+	}
+	else
+	{
+		begin = num_of_recs;
+		end = num_of_recs + num_of_new_recs;
+	}
+
+	for(i = begin; i < end; i++)
+	{
+		(*Records)[i].get_num_of_companies_ptr= get_num_of_companies;
+		(*Records)[i].set_list_of_companies_ptr = set_list_of_companies;
+		(*Records)[i].add_new_companies_ptr = add_new_companies;
+		(*Records)[i].update_company_ptr = update_company;
+		(*Records)[i].print_date_ptr = print_date;
+		(*Records)[i].set_date_ptr = set_date;
+		(*Records)[i].print_companies_ptr = print_companies;
+		(*Records)[i].save_new_companies_in_cv_list_ptr = save_new_companies_in_cv_list;
+		(*Records)[i].clean_record_data_ptr = clean_record_data;
+
+		(*Records)[i].Companies = NULL;
+		(*Records)[i].day = 0;
+		(*Records)[i].month = 0;
+		(*Records)[i].year = 0;
+		(*Records)[i].num_of_companies = 0;
+	}
+
+	return 0;
+}
+
 static int get_num_of_companies(FILE* cv_list, uint32_t* num_of_comps,
 		int point_pos,  bool getFromCvList, bool isRecordNew)
 {
