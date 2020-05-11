@@ -10,9 +10,14 @@ Record::Record()
 
 void Record::clean_record_data()
 {
-    for(int i = 0; i < num_of_companies; i++)
+	Position* Positions;
+	uint i;
+    for(i = 0; i < num_of_companies; i++)
     {
-        Companies[i].clean_company_data();
+    	Positions = Companies[i].Positions;
+    	Companies[i].clean_company_data_ptr(&Positions,
+    			&(Companies[i].num_of_positions),
+    			Companies[i].company_name);
     }
     free(Companies);
 
@@ -65,7 +70,9 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
     char row[100];
     int comp_num = -1;
     char* p;
-    Companies = (Company*) malloc(sizeof(Company) * num_of_companies);
+    //Companies = (Company*) malloc(sizeof(Company) * num_of_companies);
+
+    init_companies(&Companies, 0, num_of_companies);
     for (;;)
     {
         fgets(row, sizeof(row), cv_list);
@@ -75,9 +82,15 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
         {
             p += 9;
             comp_num++;
-            Companies[comp_num].set_name(p);
-            Companies[comp_num].get_num_of_positions(cv_list, ftell(cv_list), true, false);
-            Companies[comp_num].set_positions_list(cv_list, ftell(cv_list));
+            Companies[comp_num].set_name_ptr(Companies[comp_num].company_name, p);
+            //Companies[comp_num].set_name(p);
+            Companies[comp_num].get_num_of_positions_ptr(cv_list,
+            		&(Companies[comp_num].num_of_positions), ftell(cv_list), true, false);
+            //Companies[comp_num].get_num_of_positions(cv_list, ftell(cv_list), true, false);
+            Companies[comp_num].set_positions_list_ptr(cv_list,
+            		&(Companies[comp_num].Positions), Companies[comp_num].num_of_positions,
+					ftell(cv_list));
+            //Companies[comp_num].set_positions_list(cv_list, ftell(cv_list));
         }
 
         if (strstr(row, "Date: ") || feof(cv_list)) break;
@@ -90,6 +103,7 @@ int Record::set_list_of_companies(FILE *cv_list, int point_pos)
 
 int Record::add_new_companies(int num_of_new_comps)
 {
+	/*
     Companies = (Company*) realloc(Companies, sizeof(Company) * 
     (num_of_companies + num_of_new_comps));
 
@@ -98,17 +112,20 @@ int Record::add_new_companies(int num_of_new_comps)
         printf("Memory reallocation for Companies class variable has failed.\n");
         return -1;
     }
+    */
+	init_companies(&Companies, num_of_companies, num_of_new_comps);
     char row[100];
     char choice;
     int num_of_new_pos;
-    for(int i = num_of_companies; i < num_of_companies + num_of_new_comps; i++)
+    uint i;
+    for(i = num_of_companies; i < num_of_companies + num_of_new_comps; i++)
     {
        // system("clear");
         printf("\nNumber of companies added to the record: %i.\n",
                 num_of_companies + num_of_new_comps);
         printf("Type the name of Company No.%i: ", i+1);
         fgets(row, 100, stdin);
-        Companies[i].set_name(row);
+        Companies[i].set_name_ptr(Companies[i].company_name,row);
         num_of_new_pos = 0;
         memset(row,'\0', sizeof(row));
         do
@@ -122,8 +139,13 @@ int Record::add_new_companies(int num_of_new_comps)
             getchar();
             if(choice == 'Y') num_of_new_pos++;
         } while(choice != 'N' || num_of_new_pos == 0);
-        Companies[i].get_num_of_positions(NULL, 0, false, true);
-        Companies[i].add_new_positions(num_of_new_pos);
+        Companies[i].get_num_of_positions_ptr(NULL ,&(Companies[i].num_of_positions),
+        		0 ,false ,true );
+
+        //Companies[i].get_num_of_positions(NULL, 0, false, true);
+        Companies[i].add_new_positions_ptr(&(Companies[i].Positions),
+        		&(Companies[i].num_of_positions),num_of_new_pos );
+        //Companies[i].add_new_positions(num_of_new_pos);
     }
 
     num_of_companies+= num_of_new_comps;
@@ -135,8 +157,10 @@ int Record::update_company(int comp_num)
     char choice;
     char row[100];
     int num_of_pos = 0;
-    int sum_of_pos = Companies[comp_num -1].get_num_of_positions(NULL, 0,
-            false, false);
+    int sum_of_pos = Companies[comp_num -1].get_num_of_positions_ptr(NULL,
+    		&(Companies[comp_num -1].num_of_positions), 0, false, false);
+   // int sum_of_pos = Companies[comp_num -1].get_num_of_positions(NULL, 0,
+   //         false, false);
     do
     {
         //system("clear");
@@ -149,9 +173,14 @@ int Record::update_company(int comp_num)
         if(choice == 'Y') num_of_pos++;
     } while(choice != 'N' || num_of_pos == 0);
 
-    Companies[comp_num -1].get_num_of_positions(NULL, 0,
-        false, false);
-    Companies[comp_num -1].add_new_positions(num_of_pos);
+    Companies[comp_num -1].get_num_of_positions_ptr(NULL,
+    		&(Companies[comp_num -1].num_of_positions),	0, false, false);
+
+   // Companies[comp_num -1].get_num_of_positions(NULL, 0,
+   //     false, false);
+    Companies[comp_num -1].add_new_positions_ptr(&(Companies[comp_num -1].Positions),
+    		&(Companies[comp_num -1].num_of_positions),num_of_pos);
+    //Companies[comp_num -1].add_new_positions(num_of_pos);
 
     return 0;
 }
@@ -173,18 +202,24 @@ void Record::print_date(int record_num)
 void Record::print_companies()
 {
     printf("\n");
-    for(int i = 0; i < num_of_companies; i++)
+    uint i;
+    for(i = 0; i < num_of_companies; i++)
     {
-        printf("\tCompany No.%i: %s\n",i + 1, Companies[i].get_name());
-        Companies[i].print_positions();
+        printf("\tCompany No.%i: %s\n",i + 1, Companies[i].company_name);
+        Companies[i].print_positions_ptr(Companies[i].Positions,
+        		Companies[i].num_of_positions);
     }
 }
 
 void Record::save_new_companies_in_cv_list(FILE* cv_list)
 {
-    for(int i = 0; i< num_of_companies; i++)
+	uint i;
+    for(i = 0; i< num_of_companies; i++)
     {
-        fprintf(cv_list, "\n\tCompany: %s", Companies[i].get_name());
-        Companies[i].save_new_positions_in_cv_list(cv_list);
+        fprintf(cv_list, "\n\tCompany: %s", Companies[i].company_name);
+        Companies[i].save_new_positions_in_cv_list_ptr(cv_list, Companies[i].Positions,
+        		Companies[i].num_of_positions);
+        //Companies[i].save_new_positions_in_cv_list(cv_list);
     }
 }
+
