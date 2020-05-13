@@ -10,9 +10,9 @@ typedef struct
     uint8_t month;
     uint32_t year;
     Company *Companies;
-    int num_of_companies;
+    uint32_t num_of_companies;
     int (*get_num_of_companies_ptr)(FILE* ,uint32_t* ,int ,bool ,bool );
-    int (*set_list_of_companies_ptr)(FILE ,Company** ,uint32_t* ,int );
+    int (*set_list_of_companies_ptr)(FILE* ,Company** ,uint32_t* ,int );
     int (*add_new_companies_ptr)(Company** ,uint32_t* ,int );
     int (*update_company_ptr)(Company** ,int );
     void (*print_date_ptr)(uint8_t ,uint8_t ,uint32_t ,int );
