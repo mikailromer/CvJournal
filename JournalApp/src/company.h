@@ -20,6 +20,6 @@ typedef struct
 }Company;
 
 int init_companies(Company** Companies, uint num_of_comps,
-		uint num_of_new_comps);
+        uint num_of_new_comps);
 
 #endif

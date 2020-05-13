@@ -20,10 +20,10 @@ typedef struct
     void (*print_companies_ptr)(Company* ,uint32_t );
     void (*save_new_companies_in_cv_list_ptr)(FILE* ,Company** ,uint32_t );
     void (*clean_record_data_ptr)(Company** , uint32_t*,
-    		uint8_t* ,uint8_t* ,uint32_t* );
+            uint8_t* ,uint8_t* ,uint32_t* );
 }Record;
 
 int init_records(Record** Records, uint num_of_recs,
-		uint num_of_new_recs);
+        uint num_of_new_recs);
 
 #endif // !RECORD
