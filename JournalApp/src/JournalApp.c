@@ -24,7 +24,7 @@ int main()
     FILE* cv_list = fopen(filename,"r");
     char choice;
     char chosen_rec_num[4];
-    unsigned int rc, num;
+    unsigned int rc, num, i;
     if(!cv_list)
     {
         printf("The cv_list.txt file doesnt't exist.\n");
@@ -74,7 +74,6 @@ int main()
             break;
 
         case '3':
-            unsigned int i;
             for (i = 0; i < sum_of_records; i++)
             {
                 Records[i].clean_record_data_ptr(&(Records[i].Companies),
