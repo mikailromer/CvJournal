@@ -1,10 +1,8 @@
 #include "record.h"
-#include <cstdio>
-#include <cstring>
-#include <cstdlib>
-
-
-
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+#include "stdbool.h"
 
 static int get_num_of_companies(FILE* cv_list, uint32_t* num_of_comps,
         int point_pos,  bool getFromCvList, bool isRecordNew);
@@ -23,10 +21,10 @@ static void clean_record_data(Company** Companies, uint32_t* num_of_comps,
         uint8_t* day, uint8_t* month,  uint32_t* year);
 
 
-int init_records(Record** Records, uint num_of_recs,
-        uint num_of_new_recs)
+int init_records(Record** Records, unsigned int num_of_recs,
+        unsigned int num_of_new_recs)
 {
-    uint begin, end, i;
+    unsigned int begin, end, i;
     if(num_of_recs == 0) *Records = NULL;
     *Records = (Record*) realloc(*Records, sizeof(Record)
             * (num_of_recs + num_of_new_recs));
@@ -137,7 +135,7 @@ static int add_new_companies(Company** Companies, uint32_t* num_of_comps,
     char row[100];
     char choice;
     int num_of_new_pos;
-    uint i;
+    unsigned int i;
     for(i = *num_of_comps; i < *num_of_comps + num_of_new_comps; i++)
     {
        // system("clear");
@@ -222,7 +220,7 @@ static void print_date(uint8_t day, uint8_t month, uint32_t year, int record_num
 static void print_companies(Company* Companies, uint32_t num_of_comps)
 {
     printf("\n");
-    uint i;
+    unsigned int i;
     for(i = 0; i < num_of_comps; i++)
     {
         printf("\tCompany No.%i: %s\n",i + 1, Companies[i].company_name);
@@ -231,11 +229,10 @@ static void print_companies(Company* Companies, uint32_t num_of_comps)
     }
 }
 
-
 static void save_new_companies_in_cv_list(FILE* cv_list,Company** Companies,
         uint32_t num_of_comps)
 {
-    uint i;
+    unsigned int i;
     for(i = 0; i< num_of_comps; i++)
     {
         fprintf(cv_list, "\n\tCompany: %s", (*Companies)[i].company_name);
@@ -248,7 +245,7 @@ static void clean_record_data(Company** Companies, uint32_t* num_of_comps,
         uint8_t* day, uint8_t* month,  uint32_t* year)
 {
     Position* Positions;
-    uint i;
+    unsigned int i;
     for(i = 0; i < *num_of_comps; i++)
     {
         Positions = (*Companies)[i].Positions;

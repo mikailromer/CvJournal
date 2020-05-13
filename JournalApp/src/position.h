@@ -1,6 +1,8 @@
 #ifndef POSITION_H
 #define POSITION_H
-#include <cstdlib>
+#include "stdio.h"
+#include "stdlib.h"
+#include "stdint.h"
 
 typedef struct
 {
@@ -8,6 +10,6 @@ typedef struct
     void (*set_position_name_ptr)(char*, const char*);
 }Position;
 
-int init_positions(Position** Positions, uint num_of_pos,
-        uint num_of_new_pos);
+int init_positions(Position** Positions, unsigned int num_of_pos,
+        unsigned int num_of_new_pos);
 #endif

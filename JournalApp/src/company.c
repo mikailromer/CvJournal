@@ -1,22 +1,23 @@
 #include "company.h"
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdint>
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+#include "stdint.h"
+#include "stdbool.h"
 
-static int get_num_of_positions(FILE* cv_list, uint* num_of_pos, int point_pos,
+static int get_num_of_positions(FILE* cv_list, unsigned int* num_of_pos, int point_pos,
         bool getFromCvList, bool isCompanyNew);
 static int add_new_positions(Position** Positions, uint32_t* num_of_pos, int num_of_new_pos);
 static void set_positions_list(FILE* cv_list,Position** Positions, int num_of_pos, int point_pos);
 static void set_name(char* company_name, const char* name);
-static void print_positions(Position* Positions, uint num_of_pos);
-static void save_new_positions_in_cv_list(FILE* cv_list, Position* Positions, uint num_of_pos);
-static void clean_company_data(Position** Positions, uint* num_of_pos, char* company_name);
+static void print_positions(Position* Positions, unsigned int num_of_pos);
+static void save_new_positions_in_cv_list(FILE* cv_list, Position* Positions, unsigned int num_of_pos);
+static void clean_company_data(Position** Positions, unsigned int* num_of_pos, char* company_name);
 
-int init_companies(Company** Companies, uint num_of_comps,
-        uint num_of_new_comps)
+int init_companies(Company** Companies, unsigned int num_of_comps,
+        unsigned int num_of_new_comps)
 {
-    uint i, begin, end;
+    unsigned int i, begin, end;
     if(num_of_comps == 0) *Companies = NULL;
     *Companies = (Company*) realloc(*Companies, sizeof(Company) *
         (num_of_comps + num_of_new_comps));
@@ -54,7 +55,7 @@ int init_companies(Company** Companies, uint num_of_comps,
     return 0;
 }
 
-static int get_num_of_positions(FILE* cv_list, uint* num_of_pos, int point_pos,
+static int get_num_of_positions(FILE* cv_list, unsigned int* num_of_pos, int point_pos,
         bool getFromCvList, bool isCompanyNew)
 {
     if(getFromCvList)
@@ -78,7 +79,7 @@ static int get_num_of_positions(FILE* cv_list, uint* num_of_pos, int point_pos,
 static int add_new_positions(Position** Positions, uint32_t* num_of_pos, int num_of_new_pos)
 {
     char row[100];
-    uint i;
+    unsigned int i;
     init_positions(Positions, *num_of_pos, num_of_new_pos);
     for(i = *num_of_pos; i < *num_of_pos + num_of_new_pos; i++)
     {
@@ -124,18 +125,18 @@ static void set_name(char* company_name, const char* name)
     company_name[strlen(company_name) - 1] = '\0';
 }
 
-static void print_positions(Position* Positions, uint num_of_pos)
+static void print_positions(Position* Positions, unsigned int num_of_pos)
 {
-    uint i;
+    unsigned int i;
     for(i = 0; i < num_of_pos; i++)
     {
         printf("\t\tPosition No.%i: %s\n", i + 1, Positions[i].position_name);
     }
 }
 
-static void save_new_positions_in_cv_list(FILE* cv_list, Position* Positions, uint num_of_pos)
+static void save_new_positions_in_cv_list(FILE* cv_list, Position* Positions, unsigned int num_of_pos)
 {
-    uint i;
+    unsigned int i;
     for(i = 0; i < num_of_pos; i++)
     {
         fprintf(cv_list, "\n\t\tPosition: %s",Positions[i].position_name);
@@ -143,9 +144,9 @@ static void save_new_positions_in_cv_list(FILE* cv_list, Position* Positions, ui
     fprintf(cv_list, "\n");
 }
 
-static void clean_company_data(Position** Positions, uint* num_of_pos, char* company_name)
+static void clean_company_data(Position** Positions, unsigned int* num_of_pos, char* company_name)
 {
-    uint i;
+    unsigned int i;
     for(i = 0; i < *num_of_pos; i++)
     {
        memset((*Positions)[i].position_name, '\0', sizeof((*Positions)[i].position_name));

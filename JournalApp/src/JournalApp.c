@@ -1,8 +1,8 @@
-﻿#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdint>
-#include <cctype>
+﻿#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
+#include "stdint.h"
+#include "ctype.h"
 
 #include "record.h"
 
@@ -24,7 +24,7 @@ int main()
     FILE* cv_list = fopen(filename,"r");
     char choice;
     char chosen_rec_num[4];
-    uint rc, num;
+    unsigned int rc, num;
     if(!cv_list)
     {
         printf("The cv_list.txt file doesnt't exist.\n");
@@ -74,7 +74,8 @@ int main()
             break;
 
         case '3':
-            for (uint i = 0; i < sum_of_records; i++)
+            unsigned int i;
+            for (i = 0; i < sum_of_records; i++)
             {
                 Records[i].clean_record_data_ptr(&(Records[i].Companies),
                         &(Records[i].num_of_companies), &(Records[i].day),

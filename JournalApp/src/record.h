@@ -1,8 +1,8 @@
 #ifndef RECORD_H
 #define RECORD_H
 #include "company.h"
-#include <cstdint>
-#include <cstdio>
+#include "stdio.h"
+#include "stdint.h"
 
 typedef struct
 {
@@ -23,7 +23,7 @@ typedef struct
             uint8_t* ,uint8_t* ,uint32_t* );
 }Record;
 
-int init_records(Record** Records, uint num_of_recs,
-        uint num_of_new_recs);
+int init_records(Record** Records, unsigned int num_of_recs,
+        unsigned int num_of_new_recs);
 
 #endif // !RECORD
