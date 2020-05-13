@@ -39,7 +39,7 @@ int init_records(Record** Records, uint num_of_recs,
 	if(num_of_recs == 0)
 	{
 		begin = 0;
-		end = num_of_recs;
+		end = num_of_new_recs;
 	}
 	else
 	{
